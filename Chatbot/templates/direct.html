@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct Chat</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #chat-log { height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+        input, button { padding: 8px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <h2>Chat with {{ receiver.username }}</h2>
+
+    <div id="chat-log"></div>
+
+    <input type="text" id="chat-message-input" placeholder="Type your message..." size="60">
+    <button id="chat-message-submit">Send</button>
+
+    <script>
+        const sender = "{{ request.user.username }}";
+        const receiver = "{{ receiver.username }}";
+
+        const chatSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/chat/' + sender + '_' + receiver + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const log = document.querySelector('#chat-log');
+            log.innerHTML += `<p><strong>${data.sender}:</strong> ${data.message}</p>`;
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const input = document.querySelector('#chat-message-input');
+            const message = input.value;
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'sender': sender,
+                'receiver': receiver
+            }));
+            input.value = '';
+        };
+    </script>
+</body>
+</html>
