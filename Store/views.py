@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product, Contact
+from .models import Product
 from django.contrib import messages
 
 def home(request):
@@ -32,12 +32,12 @@ def checkout(request):
     request.session['cart'] = []
     return render(request, 'store/checkout.html')
 
-def contact(request):
-    if request.method == 'POST':
-        name = request.POST['name']
-        email = request.POST['email']
-        message = request.POST['message']
-        Contact.objects.create(name=name, email=email, message=message)
-        messages.success(request, 'Message sent successfully.')
-        return redirect('contact')
-    return render(request, 'store/contact.html')
+# def contact(request):
+#     if request.method == 'POST':
+#         name = request.POST['name']
+#         email = request.POST['email']
+#         message = request.POST['message']
+#         Contact.objects.create(name=name, email=email, message=message)
+#         messages.success(request, 'Message sent successfully.')
+#         return redirect('contact')
+#     return render(request, 'store/contact.html')
